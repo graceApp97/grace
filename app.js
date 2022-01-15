@@ -1,7 +1,12 @@
 const express = require('express');
 const morgan = require('morgan');
 const cors = require('cors');
+const fs = require('fs');
 const cookieParser = require('cookie-parser');
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocument = require('./swagger.json');
+
+const customCss = fs.readFileSync(`${process.cwd()}/swagger.css`, 'utf8');
 
 const userRouter = require('./routes/userRoutes');
 
@@ -32,6 +37,11 @@ app.use((req, res, next) => {
 });
 
 // 3) ROUTES
+app.use(
+  '/api-docs',
+  swaggerUi.serve,
+  swaggerUi.setup(swaggerDocument, { customCss })
+);
 app.get('/', (req, res) => res.json({ msg: 'Welcome to the Grace API' }));
 app.use('/api/v1/users', userRouter);
 
